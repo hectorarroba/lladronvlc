@@ -1,0 +1,683 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101010">
+<meta name="description" content="LLADRÓN VLC — Vídeo inmersivo con microdrones FPV en Valencia. Discotecas, fiestas y eventos.">
+<title>LLADRÓN VLC — Microdrone video / Valencia</title>
+<style>
+:root {
+  --bg: #0b0b0e;
+  --panel: #141419;
+  --ink: #f2edf4;
+  --muted: #8c8894;
+  --line: #2d2938;
+  --cyan: #4ce5ff;
+  --pink: #ff3399;
+  --orange: #ff5522;
+  --acid: #d4ff33;
+  --display: 'Arial Narrow', 'Helvetica Neue', sans-serif;
+  --mono: 'Courier New', monospace;
+  --page: 1240px;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:88px}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:Arial,Helvetica,sans-serif;
+  overflow-x:hidden;
+  position:relative;
+}
+
+/* Efecto Grano de Película y Desenfoque Analógico Lo-Fi */
+body:before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:20;
+  opacity:.15;
+  background:repeating-linear-gradient(0deg,transparent 0 2px,rgba(255,255,255,.05) 3px,transparent 4px);
+  mix-blend-mode:screen;
+}
+body:after{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:19;
+  opacity:.18;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.4'/%3E%3C/svg%3E");
+}
+
+/* Halo luminoso reactivo al cursor (Dream Pop / Shoegaze blur) */
+.cursor-glow {
+  position: fixed;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,51,153,0.18) 0%, rgba(76,229,255,0.12) 40%, transparent 70%);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  transition: width 0.3s, height 0.3s;
+  mix-blend-mode: screen;
+  filter: blur(40px);
+}
+
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;cursor:pointer}
+.wrap{width:min(var(--page),calc(100% - 48px));margin:auto;position:relative;z-index:2}
+.mono{font-family:var(--mono);text-transform:uppercase;letter-spacing:.08em;font-size:13px}
+.muted{color:var(--muted)}
+
+.eyebrow{display:flex;gap:12px;align-items:center;color:var(--cyan)}
+.eyebrow:before{content:"";width:26px;height:1px;background:currentColor}
+
+.topbar{position:sticky;top:0;z-index:30;background:rgba(11,11,14,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+.nav{height:74px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.brand{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:14px;letter-spacing:.09em}
+.brand-mark{width:72px;height:64px;display:grid;place-items:center;flex:none}
+.brand-mark img{display:block;width:100%;height:100%;object-fit:contain}
+.brand-mark2 {
+  width: 172px;
+  height: 164px;
+  display: flex; /* O grid */
+  justify-content: flex-end; /* Alinea todo el contenido al borde derecho */
+  align-items: center; /* Centra verticalmente */
+  flex: none;
+}
+
+.brand-mark2 img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.navlinks{display:flex;gap:30px;align-items:center}
+.navlinks a{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);transition:color .2s}
+.navlinks a:hover,.navlinks a.active{color:var(--cyan)}
+
+.nav-cta,.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:14px;
+  padding:13px 17px;border:1px solid var(--ink);font-size:11px;
+  letter-spacing:.1em;text-transform:uppercase;background:transparent;
+  transition:background .2s,color .2s,border-color .2s;
+}
+.nav-cta:hover,.btn:hover{background:var(--acid);color:#101010;border-color:var(--acid)}
+.menu-toggle{display:none;background:none;border:1px solid var(--line);padding:10px}
+
+/* HERO SECTION */
+.hero{min-height:680px;padding:80px 0 54px;display:grid;align-items:center;position:relative;overflow:hidden}.hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:6%;align-items:center}.hero h1{font-family:var(--display);font-weight:500;font-size:clamp(58px,9vw,132px);line-height:.82;letter-spacing:-.075em;margin:28px 0 28px;text-transform:uppercase}.hero h1 span{display:block;color:transparent;-webkit-text-stroke:1px var(--ink)}.hero h1 .glitch{color:var(--cyan);-webkit-text-stroke:0;text-shadow:3px 0 var(--pink),-2px 0 var(--orange)}.hero-copy{max-width:450px;font-size:16px;line-height:1.7;color:#b6b4ae}.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}.btn-primary{background:var(--cyan);border-color:var(--cyan);color:#101010}.hero-art{position:relative;aspect-ratio: .88;min-height:390px;border:1px solid #4a4a46;background:linear-gradient(135deg,rgba(80,232,242,.15),transparent 40%),linear-gradient(25deg,#171717 20%,#292323 48%,#30202d 70%,#131313);overflow:hidden}.hero-art:before{content:"";position:absolute;inset:0;background:linear-gradient(125deg,transparent 25%,rgba(255,57,140,.24) 48%,transparent 58%),repeating-linear-gradient(90deg,transparent 0 45px,rgba(255,255,255,.05) 46px 47px)}.hero-art:after{content:"REC ● 00:00:18:24\A FPV / VLC / 2026";white-space:pre;position:absolute;left:20px;top:18px;font:11px/1.8 var(--mono);color:var(--acid);letter-spacing:.1em}.orb{position:absolute;width:72%;aspect-ratio:1;border-radius:50%;left:14%;top:18%;background:radial-gradient(circle at 35% 30%,#f4ffff 0 1%,#4de8ef 5%,#3d4dba 20%,#fa3e8b 39%,#ff6b32 50%,transparent 69%);filter:blur(7px);opacity:.85;mix-blend-mode:screen;animation:float 8s ease-in-out infinite}.drone-ring{position:absolute;width:54%;aspect-ratio:1;left:23%;top:27%;border:1px solid rgba(255,255,255,.75);border-radius:50%;transform:rotate(-28deg)}.drone-ring:before,.drone-ring:after{content:"";position:absolute;width:140%;height:1px;background:rgba(255,255,255,.65);left:-20%;top:50%;transform:rotate(35deg)}.drone-ring:after{transform:rotate(-35deg)}.art-label{position:absolute;right:16px;bottom:16px;font:11px/1.8 var(--mono);text-align:right;color:var(--ink)}.art-label strong{display:block;font-size:19px;color:var(--cyan);font-weight:400}.hero-index{position:absolute;right:0;bottom:38px;color:#555;font:11px var(--mono);writing-mode:vertical-rl}
+
+.drone-img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70%;
+  height: auto;
+  z-index: 3;
+  object-fit: contain;
+  filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.7)) drop-shadow(0 0 20px rgba(76, 229, 255, 0.3));
+  animation: floatDrone 6s ease-in-out infinite;
+  transition: opacity 0.4s ease-in-out;
+}
+
+@keyframes floatDrone {
+  0%, 100% {
+    transform: translate(-50%, -50%) translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translate(-50%, -50%) translateY(-12px) rotate(2deg);
+  }
+}
+}
+@keyframes float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-15px) scale(1.05)}}
+
+.art-label{position:absolute;right:16px;bottom:16px;font:11px/1.8 var(--mono);text-align:right;color:var(--ink)}
+.art-label strong{display:block;font-size:18px;color:var(--cyan);font-weight:400}
+
+/* TICKER */
+.ticker {
+  border-block: 1px solid var(--line);
+  overflow: hidden;
+  padding: 14px 0;
+  color: var(--acid);
+  font: 13px var(--mono);
+  letter-spacing: .16em;
+  white-space: nowrap;
+  background: rgba(0,0,0,0.3);
+}
+
+.ticker-track {
+  display: flex;
+  gap: 32px;
+  width: max-content;
+  animation: marquee 25s linear infinite;
+}
+
+.ticker b {
+  font-weight: 400;
+  color: var(--pink);
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-30%);
+  }
+}
+
+/* SECTIONS */
+section{padding:110px 0}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:30px;margin-bottom:42px}
+.section-head h2{font-family:var(--display);font-size:clamp(40px,6vw,76px);font-weight:400;letter-spacing:-.05em;text-transform:uppercase;line-height:.9;margin:15px 0 0}
+.section-head p{max-width:350px;color:var(--muted);font-size:14px;line-height:1.7;margin:0}
+
+.work{background:#0e0e12}
+
+
+/* FILTERS & SLIDER */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+.filter{background:none;border:1px solid var(--line);padding:9px 12px;color:var(--muted);font:11px var(--mono);text-transform:uppercase;letter-spacing:.08em}
+.filter.active,.filter:hover{border-color:var(--cyan);color:var(--cyan)}
+
+.slider{position:relative}
+.slides{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.video-card{border:1px solid var(--line);background:var(--panel);transition:transform .3s,border-color .3s}
+.thumb {
+  position: relative;
+  aspect-ratio: 4/5;
+  overflow: hidden;
+  background: #111;
+  display: block;
+  width: 100%;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+.thumb-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  transition: transform .6s;
+}
+.video-card:hover .thumb-video {
+  transform: scale(1.08);
+}
+.thumb-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+.thumb .play, .thumb .index, .thumb .duration {
+  z-index: 2; /* Asegura que los textos y el botón de play queden por encima del vídeo */
+}
+.video-info{padding:18px}
+.video-info .meta{display:flex;justify-content:space-between;color:var(--cyan);font:11px var(--mono);text-transform:uppercase}
+.video-info h3{font-size:19px;font-weight:400;margin:12px 0 6px;letter-spacing:-.02em}
+.video-info p{font-size:12px;color:var(--muted);margin:0;line-height:1.6}
+
+.slider-controls{display:flex;align-items:center;justify-content:space-between;margin-top:24px}
+.arrows{display:flex;gap:8px}
+.arrow{width:42px;height:42px;border:1px solid var(--line);background:transparent;font-size:18px;transition:border-color .2s, color .2s}
+.arrow:hover{border-color:var(--acid);color:var(--acid)}
+.placeholder-note{font:11px/1.6 var(--mono);color:var(--muted);margin-top:16px}
+
+/* ABOUT SECTION */
+.about-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:10%;align-items:start}
+.about-title{font-family:var(--display);font-size:clamp(40px,5.5vw,72px);font-weight:400;line-height:.92;letter-spacing:-.05em;text-transform:uppercase;margin:18px 0}
+.about-title em{font-style:normal;color:var(--pink)}
+.about-copy{font-size:16px;line-height:1.8;color:#d0cbd4;max-width:620px}
+.about-copy strong{font-weight:400;color:var(--ink)}
+
+.principles{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:42px}
+.principle{background:var(--bg);padding:22px;min-height:175px}
+.principle .num{font:13px var(--mono);color:var(--acid)}
+.principle h3{font-size:17px;font-weight:400;margin:24px 0 8px}
+.principle p{font-size:12px;color:var(--muted);line-height:1.6;margin:0}
+
+.safety{display:flex;align-items:center;gap:14px;border-left:2px solid var(--acid);padding:16px 20px;margin-top:24px;background:#141611;color:#cbccbe;font-size:12px;line-height:1.6}
+.safety .symbol{font-size:20px;color:var(--acid)}
+
+/* CONTACT SECTION */
+.contact{background:var(--cyan);color:#0b0b0e}
+.contact .eyebrow{color:#1a1a1f}
+.contact .section-head h2{font-size:clamp(48px,8vw,108px)}
+.contact .section-head p{color:#1a353c}
+.contact-layout{display:grid;grid-template-columns:1.1fr .9fr;gap:10%;align-items:end}
+.contact-copy{font-size:16px;line-height:1.7;max-width:470px}
+.contact-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:25px}
+.contact .btn{border-color:#0b0b0e}
+.contact .btn:hover{background:#0b0b0e;color:var(--cyan)}
+.socials{border-top:1px solid rgba(0,0,0,.25)}
+.social{display:flex;align-items:center;justify-content:space-between;padding:18px 0;border-bottom:1px solid rgba(0,0,0,.25);font-size:18px}
+.social span:last-child{font:11px var(--mono)}
+.social:hover{opacity:.7}
+
+/* FOOTER */
+.footer{padding:24px 0;background:var(--bg);color:var(--muted)}
+.footer-inner{display:flex;justify-content:space-between;gap:18px;align-items:center;font:11px var(--mono);text-transform:uppercase;letter-spacing:.06em}
+.footer a{color:var(--cyan)}
+
+/* MODAL */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:50;display:none;place-items:center;padding:24px}
+.modal.open{display:grid}
+.modal-inner{width:min(900px,100%);position:relative}
+.modal-screen{aspect-ratio:16/9;border:1px solid var(--line);display:grid;place-items:center;text-align:center;padding:0;background:#000;overflow:hidden}
+.modal-close{position:absolute;right:0;top:-45px;background:none;border:1px solid var(--muted);padding:10px 14px;font:11px var(--mono);color:var(--ink);cursor:pointer}
+.modal-close:hover{border-color:var(--cyan);color:var(--cyan)}
+
+@media(max-width:800px){
+  .wrap{width:min(var(--page),calc(100% - 32px))}
+  .nav{height:64px}
+  .navlinks{display:none;position:absolute;top:64px;left:0;right:0;background:var(--panel);border-bottom:1px solid var(--line);padding:22px 24px;flex-direction:column;align-items:flex-start;gap:22px}
+  .navlinks.open{display:flex}
+  .nav-cta{display:none}
+  .menu-toggle{display:block}
+  .hero{padding:60px 0 40px;min-height:0}
+  .hero-grid{grid-template-columns:1fr;gap:38px}
+  .hero h1{font-size:clamp(56px,16vw,100px)}
+  .hero-art{min-height:320px}
+  section{padding:75px 0}
+  .section-head{align-items:flex-start;flex-direction:column;gap:18px;margin-bottom:30px}
+  .slides{grid-template-columns:repeat(3,minmax(75%,1fr));overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:12px}
+  .video-card{scroll-snap-align:start}
+  .about-grid{grid-template-columns:1fr;gap:25px}
+  .principles{grid-template-columns:1fr}
+  .contact-layout{grid-template-columns:1fr;gap:40px}
+  .footer-inner{align-items:flex-start;flex-direction:column}
+  
+}
+</style>
+</head>
+<body>
+
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<header class="topbar">
+  <div class="wrap nav">
+    <a class="brand" href="#inicio" aria-label="LLADRÓN VLC, inicio">
+      <span class="brand-mark"><img src="logo-mark.png" alt="Logo Lladronvlc"></span>
+      <span>LLADRON <span style="color:var(--cyan)">VLC</span></span>
+    </a>
+    <nav class="navlinks" id="navlinks">
+      <a href="#inicio" class="active">Inicio</a>
+      <a href="#trabajos">Trabajos</a>
+      <a href="#que-hacemos">Qué hacemos</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+    <a class="nav-cta" href="#contacto">Cuéntanos tu evento <span>↗</span></a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">☰</button>
+  </div>
+</header>
+
+<main>
+  <section class="hero" id="inicio">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow mono">Microdrones videos / Valencia, ES</div>
+        <h1>Dentro de<br><span>la accion</span><span class="glitch">sin molestar</span></h1>
+        <p class="hero-copy">PRODUCTORA de VÍDEOS con MICRODRONES  para espacios culturales, discotecas, fiestas y eventos. Una perspectiva dinámica, envolvente y poco invasiva para mostrar la experiencia desde dentro.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#trabajos">Explorar vídeos <span>↘</span></a>
+          <a class="btn" href="#que-hacemos">Cómo volamos <span>↗</span></a>
+        </div>
+      </div>
+<div class="hero-art" aria-label="Gráfico abstracto inspirado en una señal analógica">
+<div class="orb"></div><div class="drone-ring"></div>
+		<!-- Asegúrate de que este nombre sea idéntico al de tu archivo de imagen -->
+		<img src="tinywhoop.png" alt="Microdrone TinyWhoop Lladron VLC" class="drone-img" id="tinywhoop-drone">
+		<div class="art-label">ANALOG & DIGITAL VIDEO<strong>@LLADRONVLC</strong>SILLA — VALENCIA</div>
+		</div>
+    </div>
+  </section>
+
+<div class="ticker">
+  <div class="ticker-track">
+    <span> PERSPECTIVA INMERSIVA  </span><b>✳</b><span>  VALENCIA / SPAIN  </span><b>✳</b><span>  DISCOTECAS · FIESTAS · EVENTOS  </span><b>✳</b><span>  VUELO SEGURO | AESA CERTIFICADO  </span><b>✳</b><span>  MICRODRONES FPV  <b>✳</b><span>  GRABACIÓN | EDICIÓN  </span><b>✳</b>
+    <span> PERSPECTIVA INMERSIVA  </span><b>✳</b><span>  VALENCIA / SPAIN  </span><b>✳</b><span>  DISCOTECAS · FIESTAS · EVENTOS  </span><b>✳</b><span>  VUELO SEGURO | AESA CERTIFICADO  </span><b>✳</b><span>  MICRODRONES FPV  <b>✳</b><span>  GRABACIÓN | EDICIÓN  </span><b>✳</b>
+  </div>
+</div>
+
+  <section class="work" id="trabajos">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow mono">01 / Archivo visual</div>
+          <h2>Las experiencias<br>desde dentro.</h2>
+        </div>
+        <p>Una cámara más cerca de la música, la gente y la energía del lugar. Explora una selección de piezas y prepárate para tener la tuya!</p>
+      </div>
+
+      <div class="filters" role="group" aria-label="Filtrar vídeos">
+        <button class="filter active" data-filter="all">Todo / 06</button>
+        <button class="filter" data-filter="club">Club</button>
+        <button class="filter" data-filter="event">Eventos</button>
+        <button class="filter" data-filter="mood">Mood / Analog</button>
+      </div>
+
+      <div class="slider">
+        <div class="slides" id="slides">
+<!-- CÓDIGO HTML DE LAS TARJETAS -->
+		  <article class="video-card" data-category="event">
+    <div class="thumb" data-video="assets/video1.mp4" role="button" aria-label="Reproducir vídeo Inside the crowd">
+      <video class="thumb-video" src="assets/video1.mp4" data-time="12.5" muted preload="metadata" crossorigin="anonymous"></video>
+      <div class="thumb-overlay"></div>
+      <span class="index">CLIP_001</span>
+      <span class="play"></span>
+    </div>
+    <div class="video-info">
+      <div class="meta"><span>Evento / Tienda</span><span>01—06</span></div>
+      <h3>Designers Culture Store</h3>
+      <p>Inmersión total en la tienda de ruzafa!</p>
+    </div>
+  </article>
+
+  <!-- CLIP 002 -->
+  <article class="video-card" data-category="club">
+    <div class="thumb" data-video="assets/video2.mp4" role="button" aria-label="Reproducir vídeo All angles">
+      <video class="thumb-video" src="assets/video2.mp4" data-time="2.5" muted preload="metadata" crossorigin="anonymous"></video>
+      <div class="thumb-overlay"></div>
+      <span class="index">CLIP_002</span>
+      <span class="play"></span>
+    </div>
+    <div class="video-info">
+      <div class="meta"><span>Club/ Centro Cultural</span><span>02—06</span></div>
+      <h3>Amagatall</h3>
+      <p>Recorridos por el espacio cultural.</p>
+    </div>
+  </article>
+
+  <!-- CLIP 003 -->
+  <article class="video-card" data-category="club">
+    <div class="thumb" data-video="assets/video3.mp4" role="button" aria-label="Reproducir vídeo Signal lost">
+      <video class="thumb-video" src="assets/video3.mp4" data-time="2.5" muted preload="metadata" crossorigin="anonymous"></video>
+      <div class="thumb-overlay"></div>
+      <span class="index">CLIP_003</span>
+      <span class="play"></span>
+    </div>
+    <div class="video-info">
+      <div class="meta"><span>Club / Analog</span><span>03—06</span></div>
+      <h3>Barraca Music</h3>
+      <p>Mítica discoteca valenciana en analógico</p>
+    </div>
+  </article>
+
+  <!-- CLIP 004 -->
+  <article class="video-card" data-category="event">
+    <div class="thumb" data-video="assets/video4.mp4" role="button" aria-label="Reproducir vídeo Red room">
+      <video class="thumb-video" src="assets/video4.mp4" data-time="2.5" muted preload="metadata" crossorigin="anonymous"></video>
+      <div class="thumb-overlay"></div>
+      <span class="index">CLIP_004</span>
+      <span class="play"></span>
+    </div>
+    <div class="video-info">
+      <div class="meta"><span>Eventos / FPV</span><span>04—06</span></div>
+      <h3>Error | 404 |</h3>
+      <p>Comunidad y musica en la atmosfera. </p>
+    </div>
+  </article>
+
+  <!-- CLIP 005 -->
+  <article class="video-card" data-category="mood">
+    <div class="thumb" data-video="assets/video5.mp4" role="button" aria-label="Reproducir vídeo Moving through">
+      <video class="thumb-video" src="assets/video5.mp4" data-time="2.5" muted preload="metadata" crossorigin="anonymous"></video>
+      <div class="thumb-overlay"></div>
+      <span class="index">CLIP_005</span>
+      <span class="play"></span>
+    </div>
+    <div class="video-info">
+      <div class="meta"><span>Mood / FPV</span><span>05—06</span></div>
+      <h3>Moving through</h3>
+      <p>Dinamismo puro sin alterar la experiencia del público.</p>
+    </div>
+  </article>
+
+  <!-- CLIP 006 -->
+  <article class="video-card" data-category="mood">
+    <div class="thumb" data-video="assets/video6.mp4" role="button" aria-label="Reproducir vídeo Afterimage">
+      <video class="thumb-video" src="assets/video6.mp4" data-time="2.5" muted preload="metadata" crossorigin="anonymous"></video>
+      <div class="thumb-overlay"></div>
+      <span class="index">CLIP_006</span>
+      <span class="play"></span>
+    </div>
+    <div class="video-info">
+      <div class="meta"><span>Mood / Analog</span><span>06—06</span></div>
+      <h3>@m52_Turbo</h3>
+      <p>Cortometraje mecanico con tomas nuevas</p>
+    </div>
+  </article>
+        </div>
+
+        <div class="slider-controls">
+          <span class="mono muted" id="slideCount">01 — 06 / DESLIZA PARA EXPLORAR</span>
+          <div class="arrows">
+            <button class="arrow" id="prev" aria-label="Vídeos anteriores">←</button>
+            <button class="arrow" id="next" aria-label="Vídeos siguientes">→</button>
+          </div>
+        </div>
+        <p class="placeholder-note"></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="que-hacemos">
+    <div class="wrap">
+      <div class="about-grid">
+        <div>
+          <div class="eyebrow mono">02 / ¿Qué hacemos?</div>
+          <h2 class="about-title">Microdrones.<br><em>Enfoque nuevo.</em></h2>
+          <div class="mono muted">TINYWHOOPS / FPV / VALENCIA</div>
+		  <span class="brand-mark2"><img src="logo-mark.png" alt="Logo @Lladronvlc"></span>
+        </div>
+        <div>
+          <p class="about-copy">Utilizamos microdrones tipo <strong>TinyWhoop</strong> para grabar en eventos y lugares con un enfoque radicalmente nuevo, dinámico y poco invasivo. Queremos mostrar la experiencia como si el espectador estuviera dentro, volando codo con codo entre la multitud.</p>
+          <p class="about-copy">Inspirados por el arte de la terreta y la tecnología analógica, buscamos texturas táctiles, desenfoques y una atmósfera envolvente.</p>
+          
+          <div class="principles">
+            <div class="principle">
+              <span class="num">01 / ENFOQUE</span>
+              <h3>Grabación primera persona</h3>
+              <p>Sensación de presencia total dentro de la sala o evento.</p>
+            </div>
+            <div class="principle">
+              <span class="num">02 / INTEGRACIÓN</span>
+              <h3>Poco invasivos</h3>
+              <p>Microdrones seguros que se adaptan al flujo natural del público.</p>
+            </div>
+            <div class="principle">
+              <span class="num">03 / PREPARACIÓN</span>
+              <h3>Vuelo seguro</h3>
+              <p>Planificación técnica rigurosa en cada ubicación.</p>
+            </div>
+          </div>
+
+          <div class="safety">
+            <span class="symbol">✳</span>
+            <span><strong>Compromiso profesional:</strong> Garantizamos vuelos controlados, asegurados y coordinados con la organización del evento. Cumplimiento de lo dispuesto en el artículo 22.1.g) de la Ley 17/2009, de 23 de noviembre</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contacto">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow mono">03 / Contacto Lladron VLC</div>
+          <h2>¿Lo Volamos?</h2>
+        </div>
+        <p>Escríbenos y cuéntanos tu próximo proyecto o evento y lo valoramos juntos.</p>
+      </div>
+
+      <div class="contact-layout">
+        <div>
+          <p class="contact-copy">¿Tienes una discoteca, un evento o un espacio cultural? Descubre cómo podemos aportar una perspectiva visual única.</p>
+          <div class="contact-actions">
+            <a class="btn" href="mailto:lladronvlc@gmail.com?subject=Proyecto%20LLADR%C3%93N%20VLC">Enviar correo ↗</a>
+            <a class="btn" href="https://www.instagram.com/lladronvlc" target="_blank" rel="noreferrer">Instagram ↗</a>
+          </div>
+        </div>
+        <div class="socials">
+          <a class="social" href="https://www.instagram.com/lladronvlc" target="_blank" rel="noreferrer"><span>Instagram</span><span>@LLADRONVLC ↗</span></a>
+          <a class="social" href="mailto:lladronvlc@gmail.com"><span>Email</span><span>HABLEMOS ↗</span></a>
+
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <span>© LLADRÓN VLC — VALENCIA, ES</span>
+    <span>MICRODRONE VIDEO / FPV / EVENT CULTURE</span>
+    <a href="#inicio">VOLVER ARRIBA ↑</a>
+  </div>
+</footer>
+
+<!-- MODAL DE VÍDEO MP4 -->
+<div class="modal" id="videoModal" role="dialog" aria-modal="true" aria-label="Reproductor de vídeo">
+  <div class="modal-inner">
+    <button class="modal-close" id="modalClose">CERRAR ✕</button>
+    <div class="modal-screen">
+      <video id="modalVideo" width="100%" height="100%" controls style="display:block; object-fit:contain; max-height:80vh;">
+        <source id="videoSource" src="" type="video/mp4">
+        Tu navegador no soporta la reproducción de vídeos.
+      </video>
+    </div>
+  </div>
+</div>
+
+<script>
+// Ajusta el tiempo de inicio de cada vídeo según su atributo data-time
+document.querySelectorAll('.thumb-video').forEach(video => {
+  const targetTime = parseFloat(video.dataset.time) || 0.1;
+
+  // Intenta aplicar el segundo exacto inmediatamente
+  video.currentTime = targetTime;
+
+  // Garantiza que se renderice cuando los datos del archivo se hayan cargado
+  video.addEventListener('loadeddata', () => {
+    video.currentTime = targetTime;
+  });
+});
+// Script para cargar automáticamente el primer fotograma de cada vídeo en la miniatura
+document.querySelectorAll('.thumb-video').forEach(video => {
+  // Fuerza al vídeo a posicionarse exactamente en el inicio (fotograma 0)
+  video.currentTime = 0.1;
+  
+  // Asegura que se renderice el fotograma en cuanto los metadatos estén listos
+  video.addEventListener('loadeddata', () => {
+    video.currentTime = 0.1;
+  });
+});
+// Efecto de seguimiento del cursor para el halo luminoso
+const glow = document.getElementById('cursorGlow');
+window.addEventListener('mousemove', (e) => {
+  glow.style.left = e.clientX + 'px';
+  glow.style.top = e.clientY + 'px';
+});
+
+// Menú móvil responsive
+const nav = document.getElementById('navlinks'), menu = document.getElementById('menuToggle');
+menu.addEventListener('click', () => nav.classList.toggle('open'));
+nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+  nav.classList.remove('open');
+  nav.querySelectorAll('a').forEach(x => x.classList.remove('active'));
+  a.classList.add('active');
+}));
+
+// Filtrado de tarjetas
+const cards = [...document.querySelectorAll('.video-card')], filters = [...document.querySelectorAll('.filter')];
+filters.forEach(btn => btn.addEventListener('click', () => {
+  filters.forEach(x => x.classList.toggle('active', x === btn));
+  cards.forEach(c => c.style.display = btn.dataset.filter === 'all' || c.dataset.category === btn.dataset.filter ? '' : 'none');
+  updateCount();
+}));
+
+// Control de slider horizontal y contador
+const slides = document.getElementById('slides'), prev = document.getElementById('prev'), next = document.getElementById('next'), count = document.getElementById('slideCount');
+function updateCount() {
+  const visible = cards.filter(c => c.style.display !== 'none');
+  const index = Math.max(1, Math.round(slides.scrollLeft / (visible[0]?.offsetWidth + 16 || 1)) + 1);
+  count.textContent = String(index).padStart(2,'0') + ' — ' + String(visible.length).padStart(2,'0') + ' / DESLIZA';
+}
+prev.addEventListener('click', () => slides.scrollBy({left: -slides.clientWidth * .8, behavior: 'smooth'}));
+next.addEventListener('click', () => slides.scrollBy({left: slides.clientWidth * .8, behavior: 'smooth'}));
+slides.addEventListener('scroll', () => requestAnimationFrame(updateCount));
+
+// Sistema de Modal para reproducir vídeos MP4 locales
+const modal = document.getElementById('videoModal');
+const modalVideo = document.getElementById('modalVideo');
+const videoSource = document.getElementById('videoSource');
+
+document.querySelectorAll('.thumb').forEach(b => b.addEventListener('click', () => {
+  const videoFile = b.dataset.video;
+  if(videoFile) {
+    videoSource.src = videoFile;
+    modalVideo.load();
+    modal.classList.add('open');
+    modalVideo.play();
+    document.body.style.overflow = 'hidden';
+  }
+}));
+
+function closeModal() {
+  modal.classList.remove('open');
+  modalVideo.pause();
+  modalVideo.currentTime = 0;
+  document.body.style.overflow = '';
+}
+
+document.getElementById('modalClose').addEventListener('click', closeModal);
+modal.addEventListener('click', e => { if(e.target === modal) closeModal(); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
+  (function() {
+    const droneImg = document.getElementById('tinywhoop-drone');
+
+    // Rutas de tus imágenes
+    const imagenes = ['tinywhoop.png', 'tinywhoop2.png']; // <-- Cambia 'tinywhoop2.png' por el nombre de tu 2ª imagen
+    let indiceActual = 0;
+
+    // PRECARGA: Fuerza al navegador a descargar la 2ª imagen desde el inicio
+    imagenes.forEach(ruta => {
+      const img = new Image();
+      img.src = ruta;
+    });
+
+    setInterval(() => {
+      // 1. Desvanecer imagen actual
+      droneImg.style.opacity = '0';
+
+      setTimeout(() => {
+        // 2. Alternar entre el índice 0 y 1
+        indiceActual = (indiceActual === 0) ? 1 : 0;
+        droneImg.src = imagenes[indiceActual];
+
+        // 3. Volver a mostrar la imagen ya cargada
+        droneImg.style.opacity = '1';
+      }, 400); // Coincide con la transición CSS (0.4s)
+
+    }, 5000); // 5 segundos
+  })();
+
+</script>
+
+</body>
+</html>
