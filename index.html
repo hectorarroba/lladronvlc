@@ -642,6 +642,24 @@ prev.addEventListener('click', () => slides.scrollBy({left: -slides.clientWidth 
 next.addEventListener('click', () => slides.scrollBy({left: slides.clientWidth * .8, behavior: 'smooth'}));
 slides.addEventListener('scroll', () => requestAnimationFrame(updateCount));
 
+.thumb-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1; /* Se sitúa encima del vídeo hasta que cargue */
+}
+
+/* Cuando el vídeo se esté reproduciendo o active el hover, ocultamos la imagen */
+.thumb:hover .thumb-img,
+.thumb.playing .thumb-img {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
 // Sistema de Modal para reproducir vídeos MP4 locales
 const modal = document.getElementById('videoModal');
 const modalVideo = document.getElementById('modalVideo');
