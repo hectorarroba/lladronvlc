@@ -18,7 +18,7 @@
   --orange: #ff5522;
   --acid: #d4ff33;
   --display: 'Arial Narrow', 'Helvetica Neue', sans-serif;
-  --mono: 'Courier New', monospace;
+  --mono: 'JetBrains Mono', monospace;
   --page: 1240px;
 }
 
@@ -153,6 +153,7 @@ button{font:inherit;color:inherit;cursor:pointer}
   letter-spacing: .16em;
   white-space: nowrap;
   background: rgba(0,0,0,0.3);
+  backdrop-filter: blur(4px); /* Efecto cristal analógico (opcional) */
 }
 
 .ticker-track {
@@ -211,6 +212,7 @@ section{padding:110px 0}
   height: 100%;
   object-fit: cover;
   z-index: 0;
+  pointer-events: none;
   transition: transform .6s;
 }
 .video-card:hover .thumb-video {
@@ -303,6 +305,11 @@ section{padding:110px 0}
   
 }
 </style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
 </head>
 <body>
 
@@ -448,19 +455,31 @@ section{padding:110px 0}
   </article>
 
   <!-- CLIP 006 -->
-  <article class="video-card" data-category="mood">
+<article class="video-card" data-category="mood">
+
     <div class="thumb" data-video="video6.mp4" role="button" aria-label="Reproducir vídeo Afterimage">
+
       <video class="thumb-video" src="video6.mp4" data-time="2.5" muted preload="metadata" crossorigin="anonymous"></video>
+
       <div class="thumb-overlay"></div>
+
       <span class="index">CLIP_006</span>
+
       <span class="play"></span>
+
     </div>
+
     <div class="video-info">
+
       <div class="meta"><span>Mood / Analog</span><span>06—06</span></div>
+
       <h3>@m52_Turbo</h3>
+
       <p>Cortometraje mecanico con tomas nuevas</p>
+
     </div>
-  </article>
+
+  </article> 
         </div>
 
         <div class="slider-controls">
