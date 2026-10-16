@@ -636,32 +636,75 @@ prev.addEventListener('click', () => slides.scrollBy({left: -slides.clientWidth 
 next.addEventListener('click', () => slides.scrollBy({left: slides.clientWidth * .8, behavior: 'smooth'}));
 slides.addEventListener('scroll', () => requestAnimationFrame(updateCount));
 
-// Sistema de Modal para reproducir vídeos MP4 locales
-const modal = document.getElementById('videoModal');
-const modalVideo = document.getElementById('modalVideo');
-const videoSource = document.getElementById('videoSource');
+/unction openLocalModal(videoPath) {
+    console.log("Cargando vídeo local:", videoPath);
 
-document.querySelectorAll('.thumb').forEach(b => b.addEventListener('click', () => {
-  const videoFile = b.dataset.video;
-  if(videoFile) {
-    videoSource.src = videoFile;
-    modalVideo.load();
+    const modal = document.querySelector('.modal');
+    const player = document.getElementById('modalVideoPlayer');
+    const source = document.getElementById('modalVideoSource');
+
+    if (!modal || !player || !source) {
+      console.error("Error: No se encontró .modal, #modalVideoPlayer o #modalVideoSource en el HTML");
+      return;
+    }
+
+    // 1. Asigna la ruta del archivo .mp4 al <source>
+    source.src = videoPath;
+    
+    // 2. Recarga el reproductor con el nuevo archivo
+    player.load();
+
+    // 3. Muestra el modal añadiendo la clase .open (tu CSS)
     modal.classList.add('open');
-    modalVideo.play();
-    document.body.style.overflow = 'hidden';
+
+    // 4. Inicia la reproducción automática
+    player.play().catch(err => {
+      console.log("Autoplay bloqueado por el navegador:", err);
+    });
   }
-}));
 
-function closeModal() {
-  modal.classList.remove('open');
-  modalVideo.pause();
-  modalVideo.currentTime = 0;
-  document.body.style.overflow = '';
-}
+  function closeLocalModal() {
+    const modal = document.querySelector('.modal');
+    const player = document.getElementById('modalVideoPlayer');
+    const source = document.getElementById('modalVideoSource');
 
-document.getElementById('modalClose').addEventListener('click', closeModal);
-modal.addEventListener('click', e => { if(e.target === modal) closeModal(); });
-document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
+    if (player) {
+      player.pause();         // Detiene la reproducción
+      player.currentTime = 0; // Vuelve al segundo 0
+    }
+    
+    if (source) {
+      source.src = "";        // Vacia la ruta para liberar memoria
+    }
+
+    if (modal) {
+      modal.classList.remove('open'); // Oculta el modal retirando la clase .open
+    }
+  }
+
+  // Eventos de cierre
+  document.addEventListener('DOMContentLoaded', () => {
+    const closeBtn = document.querySelector('.modal-close');
+    const modal = document.querySelector('.modal');
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', closeLocalModal);
+    }
+
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          closeLocalModal();
+        }
+      });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeLocalModal();
+      }
+    });
+  });
   (function() {
     const droneImg = document.getElementById('tinywhoop-drone');
 
