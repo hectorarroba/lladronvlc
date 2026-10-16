@@ -238,6 +238,15 @@ section{padding:110px 0}
   object-fit: cover !important;
 }
 
+@media(max-width: 800px) {
+  /* ... tus otras reglas responsivas ... */
+
+  /* Ajuste responsive para el zoom del Clip 006 en móviles */
+  #modalVideo.zoom-fit {
+    transform: scale(1.02) translateY(-200px);
+  }
+}
+
 /* ==========================================================================
    TARJETAS DE VÍDEO Y CAPAS MULTIMEDIA (LLADRÓN VLC)
    ========================================================================== */
