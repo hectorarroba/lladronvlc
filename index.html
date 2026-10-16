@@ -191,50 +191,62 @@ section{padding:110px 0}
 .slides{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
 .video-card{border:1px solid var(--line);background:var(--panel);transition:transform .3s,border-color .3s}
 
-/* TARJETA Y CAPAS MULTIMEDIA */
+/* ==========================================================================
+   TARJETAS DE VÍDEO Y CAPAS MULTIMEDIA (LLADRÓN VLC)
+   ========================================================================== */
+
+/* Contenedor principal de la tarjeta con proporciones blindadas */
 .thumb {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9;      /* Fuerza estricta de la proporción panorámica */
-  max-height: 240px;         /* Evita que se estiren de más en pantallas gigantes */
-  overflow: hidden !important;
-  cursor: pointer;
-  background: #000;          /* Fondo negro de seguridad mientras carga */
+  aspect-ratio: 16 / 9;            /* Fuerza proporción panorámica 16:9 exacta */
+  max-height: 240px;               /* Evita desproporciones en pantallas grandes */
+  overflow: hidden !important;     /* Máscara de recorte estricta */
+  cursor: pointer;                 /* Cambia el cursor a mano interactiva */
+  background: #000;                /* Fondo negro de seguridad mientras carga */
 }
-/* Permitir que el clic traspase las capas visuales superiores */
+
+/* Transmisión de clics: las capas superiores no bloquean la interacción */
 .thumb-img,
 .thumb-overlay,
 .index,
 .play {
-  pointer-events: none; 
+  pointer-events: none;
 }
 
+/* Imagen de miniatura estática */
 .thumb-img {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover !important;
-  z-index: 2;
-  transition: opacity 0.4s ease;
+  object-fit: cover !important;    /* Ajuste perfecto sin deformación */
+  z-index: 2;                      /* Situada por encima del vídeo hasta reproducir */
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
 }
 
+/* Efecto Hover Responsive: Zoom elegante en la miniatura al pasar el ratón */
+.thumb:hover .thumb-img {
+  transform: scale(1.05);
+}
+
+/* Vídeo directo desde Cloudflare R2 */
 .thumb-video {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover !important;
-  z-index: 1;
+  object-fit: cover !important;    /* Ajuste perfecto del vídeo */
+  z-index: 1;                      /* Ubicado por debajo de la miniatura */
 }
 
-/* Ocultar la imagen miniatura cuando la tarjeta se está reproduciendo */
+/* Estado Activo: Oculta la miniatura de forma fluida cuando se pulsa y reproduce */
 .thumb.is-playing .thumb-img {
   opacity: 0;
+  transform: scale(1);
 }
-
 .video-info{padding:18px}
 .video-info .meta{display:flex;justify-content:space-between;color:var(--cyan);font:11px var(--mono);text-transform:uppercase}
 .video-info h3{font-size:19px;font-weight:400;margin:12px 0 6px;letter-spacing:-.02em}
