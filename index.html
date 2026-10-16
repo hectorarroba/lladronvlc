@@ -278,7 +278,19 @@ section{padding:110px 0}
 .footer a{color:var(--cyan)}
 
 /* MODAL */
-.modal{position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:50;display:none;place-items:center;padding:24px}
+/* El modal se oculta por defecto */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
+}
 .modal.open{display:grid}
 .modal-inner{width:min(900px,100%);position:relative}
 .modal-screen{aspect-ratio:16/9;border:1px solid var(--line);display:grid;place-items:center;text-align:center;padding:0;background:#000;overflow:hidden}
@@ -703,41 +715,60 @@ const videoModal = document.getElementById('videoModal');
   const modalClose = document.getElementById('modalClose');
 
   // Función para abrir el modal pasándole el ID del vídeo de YouTube
+<script>
   function openYoutubeModal(youtubeId) {
-    if (!youtubeId) return;
-
-    // Construimos la URL con autoplay=1 para que empiece solo al abrir
-    const embedUrl = `https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0&modestbranding=1`;
+    console.log("Cargando vídeo:", youtubeId);
     
-    youtubePlayer.src = embedUrl;
-    videoModal.style.display = 'flex';
+    const modal = document.querySelector('.modal');
+    const player = document.getElementById('youtubePlayer');
+
+    if (!modal || !player) {
+      console.error("Error: No se encontró el modal (.modal) o el iframe (#youtubePlayer)");
+      return;
+    }
+
+    // 1. Asigna la URL de YouTube con autoplay
+    player.src = `https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0&modestbranding=1`;
+    
+    // 2. Añade la clase .open que activa el { display: grid } de tu CSS
+    modal.classList.add('open');
   }
 
-  // Función para cerrar el modal y parar la reproducción de YouTube
   function closeYoutubeModal() {
-    youtubePlayer.src = ''; // Vaciar el iframe detiene inmediatamente el vídeo y el audio
-    videoModal.style.display = 'none';
+    const modal = document.querySelector('.modal');
+    const player = document.getElementById('youtubePlayer');
+
+    // 1. Vacia el src para cortar el sonido inmediatamente
+    if (player) player.src = '';
+    
+    // 2. Quita la clase .open para volver a aplicar { display: none }
+    if (modal) modal.classList.remove('open');
   }
 
-  // Listener para el botón de cerrar
-  if (modalClose) {
-    modalClose.addEventListener('click', closeYoutubeModal);
-  }
+  // Asignar evento al botón de cerrar (.modal-close)
+  document.addEventListener('DOMContentLoaded', () => {
+    const closeBtn = document.querySelector('.modal-close');
+    const modal = document.querySelector('.modal');
 
-  // Cierre al pulsar fuera de la pantalla del vídeo
-  if (videoModal) {
-    videoModal.addEventListener('click', (e) => {
-      if (e.target === videoModal) {
+    if (closeBtn) {
+      closeBtn.addEventListener('click', closeYoutubeModal);
+    }
+
+    // Cierra al hacer clic en el fondo oscuro del modal
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          closeYoutubeModal();
+        }
+      });
+    }
+
+    // Cierra al pulsar la tecla ESC
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
         closeYoutubeModal();
       }
     });
-  }
-
-  // Cierre al presionar la tecla ESC
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && videoModal.style.display === 'flex') {
-      closeYoutubeModal();
-    }
   });
 </script>
 
