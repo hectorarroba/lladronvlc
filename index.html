@@ -697,23 +697,22 @@ document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal();
     }, 5000); // 5 segundos
   })();
 document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.thumb-video').forEach(video => {
-    const targetTime = parseFloat(video.dataset.time) || 0.1;
+    document.querySelectorAll('.thumb-video').forEach(video => {
+      // Lee el tiempo configurado en el HTML (ej: data-time="2.5") o usa el segundo 1 por defecto
+      const targetTime = parseFloat(video.dataset.time) || 1.0;
 
-    const setFrame = () => {
-      // Ajusta el segundo exacto
-      video.currentTime = targetTime;
-    };
+      // Forzamos la carga de los metadatos del vídeo de Cloudflare
+      video.preload = "auto";
 
-    // Si los metadatos ya están listos, ejecuta inmediatamente
-    if (video.readyState >= 1) {
-      setFrame();
-    } else {
-      // Si no, espera al evento loadedmetadata
-      video.addEventListener('loadedmetadata', setFrame, { once: true });
-    }
+      // Cuando el vídeo cargue los datos suficientes, salta al segundo exacto y se pausa
+      video.addEventListener('loadeddata', () => {
+        video.currentTime = targetTime;
+      }, { once: true });
+
+      // Por seguridad extra, forzamos la recarga si estuviera bloqueado
+      video.load();
+    });
   });
-});
 </script>
 
 </body>
