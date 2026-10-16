@@ -195,12 +195,12 @@ section{padding:110px 0}
 .thumb {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 16 / 9;      /* Fuerza estricta de la proporción panorámica */
+  max-height: 240px;         /* Evita que se estiren de más en pantallas gigantes */
   overflow: hidden !important;
   cursor: pointer;
-  border-radius: 0px;
+  background: #000;          /* Fondo negro de seguridad mientras carga */
 }
-
 /* Permitir que el clic traspase las capas visuales superiores */
 .thumb-img,
 .thumb-overlay,
@@ -215,7 +215,7 @@ section{padding:110px 0}
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover !important;
   z-index: 2;
   transition: opacity 0.4s ease;
 }
@@ -226,7 +226,7 @@ section{padding:110px 0}
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover !important;
   z-index: 1;
 }
 
