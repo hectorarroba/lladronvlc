@@ -448,19 +448,33 @@ section{padding:110px 0}
   </article>
 
   <!-- CLIP 006 -->
-  <article class="video-card" data-category="mood">
-    <div class="thumb" data-video="video6.mp4" role="button" aria-label="Reproducir vídeo Afterimage">
-      <video class="thumb-video" src="video6.mp4" data-time="2.5" muted preload="metadata" crossorigin="anonymous"></video>
-      <div class="thumb-overlay"></div>
-      <span class="index">CLIP_006</span>
-      <span class="play"></span>
-    </div>
-    <div class="video-info">
-      <div class="meta"><span>Mood / Analog</span><span>06—06</span></div>
-      <h3>@m52_Turbo</h3>
-      <p>Cortometraje mecanico con tomas nuevas</p>
-    </div>
-  </article>
+<article class="video-card" data-category="mood">
+  <!-- 1. Llamamos a la función enviando la ruta de tu .mp4 -->
+  <div class="thumb" 
+       data-video="video6.mp4" 
+       role="button" 
+       aria-label="Reproducir vídeo Afterimage" 
+       onclick="openLocalModal('video6.mp4')">
+    
+    <!-- 2. Mantenemos el vídeo local como miniatura con #t=0.1 para forzar el primer fotograma -->
+    <video class="thumb-video" 
+           src="video6.mp4#t=0.1" 
+           muted 
+           preload="metadata" 
+           crossorigin="anonymous">
+    </video>
+
+    <div class="thumb-overlay"></div>
+    <span class="index">CLIP_006</span>
+    <span class="play"></span>
+  </div>
+  
+  <div class="video-info">
+    <div class="meta"><span>Mood / Analog</span><span>06—06</span></div>
+    <h3>@m52_Turbo</h3>
+    <p>Cortometraje mecánico con tomas nuevas</p>
+  </div>
+</article>
         </div>
 
         <div class="slider-controls">
