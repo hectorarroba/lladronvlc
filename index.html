@@ -194,17 +194,34 @@ section{padding:110px 0}
 .slider{position:relative}
 .slides{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
 .video-card{border:1px solid var(--line);background:var(--panel);transition:transform .3s,border-color .3s}
+
+/* Las capas de encima no deben bloquear los clics del ratón */
+.thumb-img,
+.thumb-overlay,
+.index,
+.play {
+  pointer-events: none; 
+}
+
 .thumb {
   position: relative;
-  aspect-ratio: 4/5;
-  overflow: hidden;
-  background: #111;
-  display: block;
   width: 100%;
-  border: 0;
-  padding: 0;
-  cursor: pointer;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  cursor: pointer; /* Muestra el cursor de mano al pasar por encima */
 }
+
+.thumb-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 2;
+  transition: opacity 0.3s ease;
+}
+
 .thumb-video {
   position: absolute;
   top: 0;
@@ -212,22 +229,12 @@ section{padding:110px 0}
   width: 100%;
   height: 100%;
   object-fit: cover;
-  display: block;    /* Evita espacios fantasmas debajo del vídeo */
-  pointer-events: none;
-  transition: transform .6s;
-}
-.video-card:hover .thumb-video {
-  transform: scale(1.08);
-}
-.thumb-overlay {
-  position: absolute;
-  inset: 0;
   z-index: 1;
-  pointer-events: none;
-  mix-blend-mode: overlay;
 }
-.thumb .play, .thumb .index, .thumb .duration {
-  z-index: 2; /* Asegura que los textos y el botón de play queden por encima del vídeo */
+
+/* Ocultar la imagen miniatura cuando la tarjeta se esté reproduciendo */
+.thumb.is-playing .thumb-img {
+  opacity: 0;
 }
 .video-info{padding:18px}
 .video-info .meta{display:flex;justify-content:space-between;color:var(--cyan);font:11px var(--mono);text-transform:uppercase}
@@ -642,24 +649,6 @@ prev.addEventListener('click', () => slides.scrollBy({left: -slides.clientWidth 
 next.addEventListener('click', () => slides.scrollBy({left: slides.clientWidth * .8, behavior: 'smooth'}));
 slides.addEventListener('scroll', () => requestAnimationFrame(updateCount));
 
-.thumb-img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: 1; /* Se sitúa encima del vídeo hasta que cargue */
-}
-
-/* Cuando el vídeo se esté reproduciendo o active el hover, ocultamos la imagen */
-.thumb:hover .thumb-img,
-.thumb.playing .thumb-img {
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-}
-
 // Sistema de Modal para reproducir vídeos MP4 locales
 const modal = document.getElementById('videoModal');
 const modalVideo = document.getElementById('modalVideo');
@@ -683,52 +672,32 @@ function closeModal() {
   document.body.style.overflow = '';
 }
 
-document.getElementById('modalClose').addEventListener('click', closeModal);
-modal.addEventListener('click', e => { if(e.target === modal) closeModal(); });
-document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
-  (function() {
-    const droneImg = document.getElementById('tinywhoop-drone');
+  document.addEventListener('DOMContentLoaded', () => {
+    const thumbs = document.querySelectorAll('.thumb');
 
-    // Rutas de tus imágenes
-    const imagenes = ['tinywhoop.png', 'tinywhoop2.png']; // <-- Cambia 'tinywhoop2.png' por el nombre de tu 2ª imagen
-    let indiceActual = 0;
+    thumbs.forEach(thumb => {
+      const video = thumb.querySelector('.thumb-video');
 
-    // PRECARGA: Fuerza al navegador a descargar la 2ª imagen desde el inicio
-    imagenes.forEach(ruta => {
-      const img = new Image();
-      img.src = ruta;
-    });
+      thumb.addEventListener('click', () => {
+        // Si el vídeo ya se está reproduciendo, lo pausamos
+        if (!video.paused) {
+          video.pause();
+          thumb.classList.remove('is-playing');
+        } else {
+          // Pausar los demás vídeos antes de reproducir el actual
+          document.querySelectorAll('.thumb-video').forEach(v => {
+            v.pause();
+            v.parentElement.classList.remove('is-playing');
+          });
 
-    setInterval(() => {
-      // 1. Desvanecer imagen actual
-      droneImg.style.opacity = '0';
-
-      setTimeout(() => {
-        // 2. Alternar entre el índice 0 y 1
-        indiceActual = (indiceActual === 0) ? 1 : 0;
-        droneImg.src = imagenes[indiceActual];
-
-        // 3. Volver a mostrar la imagen ya cargada
-        droneImg.style.opacity = '1';
-      }, 400); // Coincide con la transición CSS (0.4s)
-
-    }, 5000); // 5 segundos
-  })();
-document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.thumb-video').forEach(video => {
-      // Lee el tiempo configurado en el HTML (ej: data-time="2.5") o usa el segundo 1 por defecto
-      const targetTime = parseFloat(video.dataset.time) || 1.0;
-
-      // Forzamos la carga de los metadatos del vídeo de Cloudflare
-      video.preload = "auto";
-
-      // Cuando el vídeo cargue los datos suficientes, salta al segundo exacto y se pausa
-      video.addEventListener('loadeddata', () => {
-        video.currentTime = targetTime;
-      }, { once: true });
-
-      // Por seguridad extra, forzamos la recarga si estuviera bloqueado
-      video.load();
+          // Reproducir el vídeo seleccionado
+          video.play().then(() => {
+            thumb.classList.add('is-playing');
+          }).catch(err => {
+            console.error('Error al reproducir el vídeo:', err);
+          });
+        }
+      });
     });
   });
 </script>
