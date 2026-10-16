@@ -195,20 +195,23 @@ section{padding:110px 0}
 .video-card{border:1px solid var(--line);background:var(--panel);transition:transform .3s,border-color .3s}
 .thumb {
   position: relative;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  cursor: pointer;
+  aspect-ratio: 4/5;
   overflow: hidden;
-  background: #000;
+  background: #111;
+  display: block;
+  width: 100%;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
 }
-
-/* MUY IMPORTANTE: Desactiva los eventos del vídeo miniatura para que no bloquee el clic */
 .thumb-video {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  pointer-events: none; 
-  display: block;
+  z-index: 0;
+  transition: transform .6s;
 }
 .video-card:hover .thumb-video {
   transform: scale(1.08);
@@ -445,33 +448,19 @@ section{padding:110px 0}
   </article>
 
   <!-- CLIP 006 -->
-<article class="video-card" data-category="mood">
-  <!-- 1. Llamamos a la función enviando la ruta de tu .mp4 -->
-  <div class="thumb" 
-       data-video="video6.mp4" 
-       role="button" 
-       aria-label="Reproducir vídeo Afterimage" 
-       onclick="openLocalModal('video6.mp4')">
-    
-    <!-- 2. Mantenemos el vídeo local como miniatura con #t=0.1 para forzar el primer fotograma -->
-    <video class="thumb-video" 
-           src="video6.mp4#t=0.1" 
-           muted 
-           preload="metadata" 
-           crossorigin="anonymous">
-    </video>
-
-    <div class="thumb-overlay"></div>
-    <span class="index">CLIP_006</span>
-    <span class="play"></span>
-  </div>
-  
-  <div class="video-info">
-    <div class="meta"><span>Mood / Analog</span><span>06—06</span></div>
-    <h3>@m52_Turbo</h3>
-    <p>Cortometraje mecánico con tomas nuevas</p>
-  </div>
-</article>
+  <article class="video-card" data-category="mood">
+    <div class="thumb" data-video="video6.mp4" role="button" aria-label="Reproducir vídeo Afterimage">
+      <video class="thumb-video" src="video6.mp4" data-time="2.5" muted preload="metadata" crossorigin="anonymous"></video>
+      <div class="thumb-overlay"></div>
+      <span class="index">CLIP_006</span>
+      <span class="play"></span>
+    </div>
+    <div class="video-info">
+      <div class="meta"><span>Mood / Analog</span><span>06—06</span></div>
+      <h3>@m52_Turbo</h3>
+      <p>Cortometraje mecanico con tomas nuevas</p>
+    </div>
+  </article>
         </div>
 
         <div class="slider-controls">
@@ -633,75 +622,32 @@ prev.addEventListener('click', () => slides.scrollBy({left: -slides.clientWidth 
 next.addEventListener('click', () => slides.scrollBy({left: slides.clientWidth * .8, behavior: 'smooth'}));
 slides.addEventListener('scroll', () => requestAnimationFrame(updateCount));
 
-/unction openLocalModal(videoPath) {
-    console.log("Cargando vídeo local:", videoPath);
+// Sistema de Modal para reproducir vídeos MP4 locales
+const modal = document.getElementById('videoModal');
+const modalVideo = document.getElementById('modalVideo');
+const videoSource = document.getElementById('videoSource');
 
-    const modal = document.querySelector('.modal');
-    const player = document.getElementById('modalVideoPlayer');
-    const source = document.getElementById('modalVideoSource');
-
-    if (!modal || !player || !source) {
-      console.error("Error: No se encontró .modal, #modalVideoPlayer o #modalVideoSource en el HTML");
-      return;
-    }
-
-    // 1. Asigna la ruta del archivo .mp4 al <source>
-    source.src = videoPath;
-    
-    // 2. Recarga el reproductor con el nuevo archivo
-    player.load();
-
-    // 3. Muestra el modal añadiendo la clase .open (tu CSS)
+document.querySelectorAll('.thumb').forEach(b => b.addEventListener('click', () => {
+  const videoFile = b.dataset.video;
+  if(videoFile) {
+    videoSource.src = videoFile;
+    modalVideo.load();
     modal.classList.add('open');
-
-    // 4. Inicia la reproducción automática
-    player.play().catch(err => {
-      console.log("Autoplay bloqueado por el navegador:", err);
-    });
+    modalVideo.play();
+    document.body.style.overflow = 'hidden';
   }
+}));
 
-  function closeLocalModal() {
-    const modal = document.querySelector('.modal');
-    const player = document.getElementById('modalVideoPlayer');
-    const source = document.getElementById('modalVideoSource');
+function closeModal() {
+  modal.classList.remove('open');
+  modalVideo.pause();
+  modalVideo.currentTime = 0;
+  document.body.style.overflow = '';
+}
 
-    if (player) {
-      player.pause();         // Detiene la reproducción
-      player.currentTime = 0; // Vuelve al segundo 0
-    }
-    
-    if (source) {
-      source.src = "";        // Vacia la ruta para liberar memoria
-    }
-
-    if (modal) {
-      modal.classList.remove('open'); // Oculta el modal retirando la clase .open
-    }
-  }
-
-  // Eventos de cierre
-  document.addEventListener('DOMContentLoaded', () => {
-    const closeBtn = document.querySelector('.modal-close');
-    const modal = document.querySelector('.modal');
-
-    if (closeBtn) {
-      closeBtn.addEventListener('click', closeLocalModal);
-    }
-
-    if (modal) {
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-          closeLocalModal();
-        }
-      });
-    }
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        closeLocalModal();
-      }
-    });
-  });
+document.getElementById('modalClose').addEventListener('click', closeModal);
+modal.addEventListener('click', e => { if(e.target === modal) closeModal(); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
   (function() {
     const droneImg = document.getElementById('tinywhoop-drone');
 
