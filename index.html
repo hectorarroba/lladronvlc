@@ -195,14 +195,18 @@ section{padding:110px 0}
 .video-card{border:1px solid var(--line);background:var(--panel);transition:transform .3s,border-color .3s}
 .thumb {
   position: relative;
-  aspect-ratio: 4/5;
-  overflow: hidden;
-  background: #111;
-  display: block;
   width: 100%;
-  border: 0;
-  padding: 0;
+  aspect-ratio: 16 / 9;
   cursor: pointer;
+  overflow: hidden;
+  background: #000;
+}
+
+.thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Evita franjas negras recortando la imagen */
+  display: block;
 }
 .thumb-video {
   position: absolute;
@@ -373,19 +377,30 @@ section{padding:110px 0}
       <div class="slider">
         <div class="slides" id="slides">
 <!-- CÓDIGO HTML DE LAS TARJETAS -->
-		  <article class="video-card" data-category="event">
-    <div class="thumb" data-video="assets/video1.mp4" role="button" aria-label="Reproducir vídeo Inside the crowd">
-      <video class="thumb-video" src="assets/video1.mp4" data-time="12.5" muted preload="metadata" crossorigin="anonymous"></video>
-      <div class="thumb-overlay"></div>
-      <span class="index">CLIP_001</span>
-      <span class="play"></span>
-    </div>
-    <div class="video-info">
-      <div class="meta"><span>Evento / Tienda</span><span>01—06</span></div>
-      <h3>Designers Culture Store</h3>
-      <p>Inmersión total en la tienda de ruzafa!</p>
-    </div>
-  </article>
+<!-- TARJETA DE VÍDEO -->
+<article class="video-card" data-category="event">
+  <!-- Enviamos el ID de YouTube en openYoutubeModal('ID_DEL_VIDEO') -->
+  <div class="thumb" 
+       role="button" 
+       aria-label="Reproducir vídeo Inside the crowd" 
+       onclick="openYoutubeModal('uVqlEdnuTqc')">
+    
+    <!-- Para la miniatura usamos la imagen oficial que genera YouTube automáticamente -->
+    <img class="thumb-img" 
+         src="https://img.youtube.com/vi/uVqlEdnuTqc/hqdefault.jpg" 
+         alt="Miniatura Designers Culture Store">
+    
+    <div class="thumb-overlay"></div>
+    <span class="index">CLIP_001</span>
+    <span class="play"></span>
+  </div>
+  
+  <div class="video-info">
+    <div class="meta"><span>Evento / Tienda</span><span>01—06</span></div>
+    <h3>Designers Culture Store</h3>
+    <p>Inmersión total en la tienda de ruzafa!</p>
+  </div>
+</article>
 
   <!-- CLIP 002 -->
   <article class="video-card" data-category="club">
@@ -551,15 +566,22 @@ section{padding:110px 0}
   </div>
 </footer>
 
-<!-- MODAL DE VÍDEO MP4 -->
+<!-- MODAL CON IFRAME DE YOUTUBE -->
 <div class="modal" id="videoModal" role="dialog" aria-modal="true" aria-label="Reproductor de vídeo">
   <div class="modal-inner">
     <button class="modal-close" id="modalClose">CERRAR ✕</button>
     <div class="modal-screen">
-      <video id="modalVideo" width="100%" height="100%" controls style="display:block; object-fit:contain; max-height:80vh;">
-        <source id="videoSource" src="" type="video/mp4">
-        Tu navegador no soporta la reproducción de vídeos.
-      </video>
+      <!-- El iframe se cargará vacío y JS insertará la URL con el ID -->
+      <iframe id="youtubePlayer" 
+              width="100%" 
+              height="100%" 
+              src="" 
+              title="Reproductor FPV Lladrón VLC" 
+              frameborder="0" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+              allowfullscreen 
+              style="display:block; width:100%; height:80vh; border:none;">
+      </iframe>
     </div>
   </div>
 </div>
@@ -676,7 +698,47 @@ document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal();
 
     }, 5000); // 5 segundos
   })();
+const videoModal = document.getElementById('videoModal');
+  const youtubePlayer = document.getElementById('youtubePlayer');
+  const modalClose = document.getElementById('modalClose');
 
+  // Función para abrir el modal pasándole el ID del vídeo de YouTube
+  function openYoutubeModal(youtubeId) {
+    if (!youtubeId) return;
+
+    // Construimos la URL con autoplay=1 para que empiece solo al abrir
+    const embedUrl = `https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0&modestbranding=1`;
+    
+    youtubePlayer.src = embedUrl;
+    videoModal.style.display = 'flex';
+  }
+
+  // Función para cerrar el modal y parar la reproducción de YouTube
+  function closeYoutubeModal() {
+    youtubePlayer.src = ''; // Vaciar el iframe detiene inmediatamente el vídeo y el audio
+    videoModal.style.display = 'none';
+  }
+
+  // Listener para el botón de cerrar
+  if (modalClose) {
+    modalClose.addEventListener('click', closeYoutubeModal);
+  }
+
+  // Cierre al pulsar fuera de la pantalla del vídeo
+  if (videoModal) {
+    videoModal.addEventListener('click', (e) => {
+      if (e.target === videoModal) {
+        closeYoutubeModal();
+      }
+    });
+  }
+
+  // Cierre al presionar la tecla ESC
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && videoModal.style.display === 'flex') {
+      closeYoutubeModal();
+    }
+  });
 </script>
 
 </body>
