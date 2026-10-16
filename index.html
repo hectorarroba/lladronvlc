@@ -695,7 +695,24 @@ document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal();
 
     }, 5000); // 5 segundos
   })();
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.thumb-video').forEach(video => {
+    const targetTime = parseFloat(video.dataset.time) || 0.1;
 
+    const setFrame = () => {
+      // Ajusta el segundo exacto
+      video.currentTime = targetTime;
+    };
+
+    // Si los metadatos ya están listos, ejecuta inmediatamente
+    if (video.readyState >= 1) {
+      setFrame();
+    } else {
+      // Si no, espera al evento loadedmetadata
+      video.addEventListener('loadedmetadata', setFrame, { once: true });
+    }
+  });
+});
 </script>
 
 </body>
