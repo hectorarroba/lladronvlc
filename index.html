@@ -55,7 +55,8 @@ body:after{
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.4'/%3E%3C/svg%3E");
 }
 
-/* Halo luminoso reactivo al cursor */
+
+/* Halo luminoso reactivo al cursor (PC) y giroscopio (Móvil) */
 .cursor-glow {
   position: fixed;
   width: 500px;
@@ -65,7 +66,7 @@ body:after{
   pointer-events: none;
   transform: translate(-50%, -50%);
   z-index: 1;
-  transition: width 0.3s, height 0.3s;
+  transition: left 0.25s ease-out, top 0.25s ease-out;
   mix-blend-mode: screen;
   filter: blur(40px);
 }
@@ -348,6 +349,10 @@ section{padding:110px 0}
   .principles{grid-template-columns:1fr}
   .contact-layout{grid-template-columns:1fr;gap:40px}
   .footer-inner{align-items:flex-start;flex-direction:column}
+	/* Ajuste responsive para el zoom del Clip 006 en móviles */
+	#modalVideo.zoom-fit {
+    transform: scale(1.02) translateY(-215px);
+  }														   
 }
 </style>
 
@@ -622,6 +627,33 @@ window.addEventListener('mousemove', (e) => {
   glow.style.top = e.clientY + 'px';
 });
 
+// Control por Giroscopio en Dispositivos Móviles
+if (window.DeviceOrientationEvent && glow) {
+  if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+    document.body.addEventListener('click', function initGyroOnce() {
+      DeviceOrientationEvent.requestPermission()
+        .then(response => {
+          if (response === 'granted') {
+            window.addEventListener('deviceorientation', handleGyro);
+          }
+        })
+        .catch(console.error);
+      document.body.removeEventListener('click', initGyroOnce);
+    }, { once: true });
+  } else {
+    window.addEventListener('deviceorientation', handleGyro);
+  }
+}
+
+function handleGyro(e) {
+  if (!glow) return;
+  // Convierte la inclinación física del móvil en porcentajes suaves de pantalla
+  const x = Math.min(Math.max((e.gamma || 0) * 2 + 50, 10), 90);
+  const y = Math.min(Math.max((e.beta || 0) * 1.5 + 40, 10), 90);
+  
+  glow.style.left = x + '%';
+  glow.style.top = y + '%';
+}
 // Menú móvil responsive
 const nav = document.getElementById('navlinks'), menu = document.getElementById('menuToggle');
 menu.addEventListener('click', () => nav.classList.toggle('open'));
