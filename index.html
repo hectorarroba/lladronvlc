@@ -141,6 +141,7 @@ button{font:inherit;color:inherit;cursor:pointer}
   object-fit: contain;
   filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.7)) drop-shadow(0 0 20px rgba(76, 229, 255, 0.3));
   animation: floatDrone 6s ease-in-out infinite;
+  transition: opacity 0.6s ease-in-out; /* <- LÍNEA AÑADIDA */
 }
 
 @keyframes floatDrone {
@@ -620,6 +621,26 @@ section{padding:110px 0}
 </footer>
 
 <script>
+// Alternador automático de la imagen del dron con efecto fade
+const droneImg = document.getElementById('tinywhoop-drone');
+if (droneImg) {
+  const images = ['tinywhoop.png', 'tinywhoop2.png'];
+  let currentIndex = 0;
+
+  setInterval(() => {
+    // 1. Inicia el desvanecimiento (Fade Out)
+    droneImg.style.opacity = '0';
+    
+    setTimeout(() => {
+      // 2. Cambia la fuente de la imagen mientras está invisible
+      currentIndex = (currentIndex + 1) % images.length;
+      droneImg.src = images[currentIndex];
+      
+      // 3. Vuelve a mostrar la imagen suavemente (Fade In)
+      droneImg.style.opacity = '1';
+    }, 600); // 600ms de espera para coincidir con el tiempo del CSS
+  }, 5500); // Cambia cada 4 segundos
+}
 // Efecto de seguimiento del cursor para el halo luminoso
 const glow = document.getElementById('cursorGlow');
 window.addEventListener('mousemove', (e) => {
